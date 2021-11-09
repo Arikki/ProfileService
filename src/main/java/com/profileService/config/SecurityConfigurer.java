@@ -110,6 +110,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 		   .permitAll()
 		   .antMatchers("/signup")
 		   .permitAll()
+		   .antMatchers("/actuator/**")
+		   .permitAll()
 		   .antMatchers(HttpMethod.OPTIONS)
 		   .permitAll()
 		   .anyRequest()

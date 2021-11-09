@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +21,15 @@ public class MemberProfileServiceImpl implements MemberProfileService {
 	@Autowired
 	private MemberProfileRepository repository;
 	
-	
+	private Logger logger = LoggerFactory.getLogger(MemberProfileServiceImpl.class);
 	
 	private static Random random=new Random();
 	
 	
 	public MemberProfile addMemberProfile(MemberProfile profile) throws InvalidDataException {
-		
+		logger.info("Inside service to add profile of user" + profile.getEmail());
 	validateInput(profile);
-		
-		Integer age  = Optional.of(profile.getAge()).orElse(0);		
-		 if(age<18) {
-			 throw new InvalidDataException("Age must be greater than 18");
-		 }
+	
 		 
 		
 		 
@@ -41,7 +39,7 @@ public class MemberProfileServiceImpl implements MemberProfileService {
 	}
 	
 	public MemberProfile updateMemberProfile(MemberProfile profile) throws InvalidDataException {
-		
+		logger.info("Inside service to update profile of user" + profile.getEmail());
 		validateInput(profile);
 		
 		MemberProfile savedProfile = getMemberProfile(profile.getEmail());
@@ -75,12 +73,14 @@ public class MemberProfileServiceImpl implements MemberProfileService {
 	public MemberProfile getMemberProfile(String email) throws InvalidDataException{
 		MemberProfile profile = null;
 		try {
+			logger.info("Lookup of email " + email + "in db");
 				profile = repository.findById(email).get();
 		}
 		catch (NoSuchElementException e) {
+			logger.error("Lookup of email " + email + " failed");
 			throw new InvalidDataException("Email not found");
 		}
-				
+		logger.info("Successful lookup of email " + email + "in db");
 				return profile;
 	}
 	private void validateInput(MemberProfile profile) throws InvalidDataException {
@@ -93,9 +93,15 @@ public class MemberProfileServiceImpl implements MemberProfileService {
 		String phoneRegex= "[0-9]+";
 		String emailRegex="^(.+)@(.+)\\.(.+)$";
 		
+		
+		Integer age  = Optional.of(profile.getAge()).orElse(0);		
+		 if(age<18) {
+			 throw new InvalidDataException("Age must be greater than 18");
+		 }
+		
 		 if (email.length() > 0 && !email.matches(emailRegex)) {
 			 
-			 throw new InvalidDataException("Email Id must contain '@' and '.' ");
+			 throw new InvalidDataException("Email Id must contain '@' and '.'");
 		 }
 		
 	 if (contactNum.length()>0 && (contactNum.length() !=10 || !contactNum.matches(phoneRegex))) {

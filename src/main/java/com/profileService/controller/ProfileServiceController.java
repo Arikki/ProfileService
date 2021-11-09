@@ -3,6 +3,8 @@ package com.profileService.controller;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -30,6 +32,7 @@ public class ProfileServiceController {
 	
 
 	
+private Logger logger = LoggerFactory.getLogger(ProfileServiceController.class);
 
 	
 	@Autowired
@@ -43,16 +46,16 @@ public class ProfileServiceController {
 
 	@PostMapping("/profile/register")
 	public MemberProfile addMemberProfile(@RequestBody MemberProfile profile) throws InvalidDataException {
-		System.out.println(profile.toString());
-		return memberProfileSvc.addMemberProfile(profile);
-		
-		
+		logger.info("Inside controller to add a profile for user " + profile.getEmail());
+		 MemberProfile savedProfile = memberProfileSvc.addMemberProfile(profile);
+		 logger.info("Successfully added profile for user " + profile.getEmail());
+		return savedProfile;
 	}
 	
 	
 	@GetMapping("/profile/find/{id}")
 	public MemberProfile getMemberProfile(@PathVariable ("id") String email) throws InvalidDataException {
-		System.out.println("Email in GET request ==>" + email);
+		logger.info("Inside controller to get the profile of user " + email);
 		
 		return memberProfileSvc.getMemberProfile(email);
 	}
@@ -60,8 +63,10 @@ public class ProfileServiceController {
 
 	@PutMapping("/profile/update")
 	public MemberProfile updateMemberProfile(@RequestBody MemberProfile profile ) throws InvalidDataException{
-		
-		 return memberProfileSvc.updateMemberProfile(profile);
+		logger.info("Inside controller to update the profile for user " + profile.getEmail());
+		  MemberProfile savedProfile = memberProfileSvc.updateMemberProfile(profile);
+		  logger.info("Successfully updated profile for user " + profile.getEmail());
+		 return savedProfile;
 	}
 	
 	

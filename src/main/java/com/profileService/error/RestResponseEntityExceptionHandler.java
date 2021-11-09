@@ -14,6 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.profileService.entity.ErrorMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 
 
@@ -22,14 +24,8 @@ import org.springframework.dao.DuplicateKeyException;
 @ResponseStatus
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 	
-//	@Override
-//	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//			HttpHeaders headers, HttpStatus status, WebRequest request) {
-//		// TODO Auto-generated method stub
-//		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, ex.getBindingResult().getFieldError().getDefaultMessage());
-//		return handleExceptionInternal(ex, message, headers, HttpStatus.BAD_REQUEST, request);
-//	}
-
+	private Logger logger = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
+	
 	@ExceptionHandler(UsernameNotFoundException.class)
 	public ResponseEntity<ErrorMessage> badCredentialsException(UsernameNotFoundException exception, WebRequest request) {
 		ErrorMessage message =null;
@@ -50,6 +46,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 			
 		}
 		
+		logger.error(message.toString());
 	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
 	
 }
@@ -60,7 +57,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		
 		 ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, "This Email id is already in use");
 		
-		
+		 logger.error(message.toString());
 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
 	
 } 
@@ -69,7 +66,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	public ResponseEntity<ErrorMessage> invalidDataException(InvalidDataException exception, WebRequest request) {
 
 		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
-		
+		logger.error(message.toString());
 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
 	
 }
